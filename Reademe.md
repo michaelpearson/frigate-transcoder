@@ -4,14 +4,22 @@ This project is a simple HTTP proxy server written in Go that fetches video stre
 
 ## Features
 
-- Fetches video from an upstream server (default: `http://frigate:5000`)
+- Fetches video from an upstream server
 - Transcodes video to 854x480 resolution using Intel QSV hardware acceleration
 - Streams output as MPEG-TS (`video/ts`) to clients
 - Passes through audio without re-encoding
-- Gracefully handles client disconnects and upstream errors
-- Runs in a Docker container with FFmpeg and QSV support
 
 ## Usage
+
+This container is designed to be used with caddy & frigate with the follow caddy configuration. This will intercept requests for `*.ts` files and transcode them.
+```
+@ts_files {
+   path *.ts
+}
+reverse_proxy @ts_files http://<transcoder host>:8080
+```
+
+## Development
 
 ### Build and Run with Docker
 
@@ -28,21 +36,10 @@ This project is a simple HTTP proxy server written in Go that fetches video stre
 
    The proxy will fetch the corresponding path from the upstream server, transcode, and stream it.
 
-### Configuration
-
-- **Upstream server:** Change the `UPSTREAM_HOST` constant in [`main.go`](main.go) if your upstream server is not `http://frigate:5000`.
-- **FFmpeg options:** Adjust the FFmpeg command in [`main.go`](main.go) to change transcoding parameters.
-
 ### Requirements
 
 - Docker (with access to Intel QSV hardware if using hardware acceleration)
 - The upstream server must be accessible from the container
-
-## File Structure
-
-- [`main.go`](main.go): Go HTTP proxy and transcoder source code
-- [`Dockerfile`](Dockerfile): Multi-stage build for Go and FFmpeg
-- [`run.sh`](run.sh): Build and run helper script
 
 ## Notes
 

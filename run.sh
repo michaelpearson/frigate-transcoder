@@ -4,5 +4,5 @@ docker run --rm \
    --name video-proxy \
    --device /dev/dri:/dev/dri \
    --network=workspace_default \
-   -p 8080:8080 \
+   -e REMOTE_HOST=http://frigate:8080 \
    video-transcoder:latest

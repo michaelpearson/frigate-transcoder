@@ -1,7 +1,8 @@
-FROM golang:1.22-bookworm AS builder
+FROM golang:1.25-alpine AS builder
 WORKDIR /app
-COPY main.go .
-RUN go build -o transcoder main.go
+COPY . .
+RUN go mod download
+RUN go build -o transcoder ./cmd
 
 FROM linuxserver/ffmpeg
 WORKDIR /app
